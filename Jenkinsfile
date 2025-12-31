@@ -26,7 +26,7 @@ environment {
 
 // ------------------- build stage -----------------------  
     stages {
-        stage('Read-Version') {
+        stage('BUILD') {
             steps {
                 script{
                     sh """
@@ -38,7 +38,7 @@ environment {
                 }
             }
         }
-        stage('Test') {
+        stage('Read-Version') {
             
             // input {
             //     message "Should we continue?"
@@ -53,6 +53,18 @@ environment {
                     def packageJSON = readJSON file: 'package.json'
                     appVersion = packageJSON.version
                     echo "app verison: ${appVersion}"
+                }
+            }
+        }
+
+                stage('Install Deps') {
+            steps {
+                script{
+                    sh """
+                            npm install
+
+
+                       """ 
                 }
             }
         }
