@@ -16,6 +16,7 @@ pipeline {
 // environment variables
 environment { 
         COURSE = 'Jenkin'
+        appVersion= ""
     }
 //  after the timeout abort the pipeline    
     options {
@@ -25,12 +26,13 @@ environment {
 
 // ------------------- build stage -----------------------  
     stages {
-        stage('Building') {
+        stage('Read-Version') {
             steps {
                 script{
                     sh """
-                        echo "Building----------A-Build"
+                        echo "Building----------A-Read-Version"
                         echo "COurse we learn is : $COURSE"
+
 
                        """ 
                 }
@@ -48,9 +50,9 @@ environment {
 
             steps {
             script{
-                    sh """
-                        echo "Building----------A-Test"
-                       """ 
+                    def packageJSON = readCSV file: 'package.json'
+                    appVersion = packageJSON.version
+                    echo "app verison: ${appVersion}"
                 }
             }
         }
