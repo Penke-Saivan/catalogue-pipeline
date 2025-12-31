@@ -17,6 +17,9 @@ pipeline {
 environment { 
         COURSE = 'Jenkin'
         appVersion= ""
+        ACC_ID = "131676642204"
+        PROJECT = "roboshop"
+        COMPONENT = "catalogue"
     }
 //  after the timeout abort the pipeline    
     options {
@@ -72,15 +75,33 @@ environment {
                         stage('Build Images') {
             steps {
                 script{
-                    sh """
-                            docker build -t catalogue:${appVersion} .
-                            docker images
+withAWS(region:'us-east-1',credentials:'aws-creds') {
+    // do something-withAWS keeps aws creds ready for the code in this block
 
+    sh """
+    echo "Building Image and pushing to ECR"
+    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+    docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
+    docker images
+    docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
 
-                       """ 
+       """
+}
                 }
             }
         }
+        //                 stage('Build Images') {
+        //     steps {
+        //         script{
+        //             sh """
+        //                     docker build -t catalogue:${appVersion} .
+        //                     docker images
+
+
+        //                """ 
+        //         }
+        //     }
+        // }
         // stage('Deploy') {
 
         //     when {
