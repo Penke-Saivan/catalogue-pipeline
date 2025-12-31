@@ -68,24 +68,37 @@ environment {
                 }
             }
         }
-        stage('Deploy') {
 
-            when {
-                // ver important for deployment
-                expression {
-                     "${params.DEPLOY}" == "true" 
-                }
-                
-                }
-
+                        stage('Build Images') {
             steps {
                 script{
                     sh """
-                        echo "Building----------A-Deployment------------------WHEN-CONDITION"
+                            docker build -t catalogue:${appVersion} .
+                            docker images
+
+
                        """ 
                 }
             }
         }
+        // stage('Deploy') {
+
+        //     when {
+        //         // ver important for deployment
+        //         expression {
+        //              "${params.DEPLOY}" == "true" 
+        //         }
+                
+        //         }
+
+        //     steps {
+        //         script{
+        //             sh """
+        //                 echo "Building----------A-Deployment------------------WHEN-CONDITION"
+        //                """ 
+        //         }
+        //     }
+        // }
     }
 
     // --------------------------post build--------------------
