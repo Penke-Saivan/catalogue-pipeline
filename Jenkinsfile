@@ -92,6 +92,7 @@ pipeline {
                     // Wait for the quality gate status
                     // abortPipeline: true will fail the Jenkins job if the quality gate is 'FAILED'
                     waitForQualityGate abortPipeline: true
+                    // ERROR: Pipeline aborted due to quality gate failure: ERROR
                 }
             }
         }
