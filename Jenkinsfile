@@ -1,48 +1,41 @@
 pipeline {
-
     // ------------pre-build-----------------
 
     // agent configured
     agent {
-    node {
-        label 'AGENT-1'
-        
+        node {
+            label 'AGENT-1'
+        }
     }
 
-}
-
-
-
-// environment variables
-environment { 
+    // environment variables
+    environment {
         COURSE = 'Jenkin'
-        appVersion= ""
-        ACC_ID = "131676642204"
-        PROJECT = "roboshop"
-        COMPONENT = "catalogue"
+        appVersion = ''
+        ACC_ID = '131676642204'
+        PROJECT = 'roboshop'
+        COMPONENT = 'catalogue'
     }
-//  after the timeout abort the pipeline    
+    //  after the timeout abort the pipeline
     options {
-        timeout(time: 10, unit: 'MINUTES') 
+        timeout(time: 10, unit: 'MINUTES')
         disableConcurrentBuilds()
     }
 
-// ------------------- build stage -----------------------  
+    // ------------------- build stage -----------------------
     stages {
         stage('BUILD') {
             steps {
-                script{
+                script {
                     sh """
                         echo "Building----------A-Read-Version"
                         echo "COurse we learn is : $COURSE"
 
-
-                       """ 
+                       """
                 }
             }
         }
         stage('Read-Version') {
-            
             // input {
             //     message "Should we continue?"
             //     ok "Yes, we should."
@@ -52,33 +45,32 @@ environment {
             //     }}
 
             steps {
-            script{
+                script {
                     def packageJSON = readJSON file: 'package.json'
                     appVersion = packageJSON.version
                     echo "app verison: ${appVersion}"
                 }
             }
-        }
+            }
 
                 stage('Install Deps') {
             steps {
-                script{
-                    sh """
+                script {
+                    sh '''
                             npm install
 
-
-                       """ 
+                       '''
                 }
             }
-        }
+                }
 
-                        stage('Build Images') {
+        stage('Build Images') {
             steps {
-                script{
-withAWS(region:'us-east-1',credentials:'aws-creds') {
+                script {
+                    withAWS(region:'us-east-1', credentials:'aws-creds') {
     // do something-withAWS keeps aws creds ready for the code in this block
 
-    sh """
+                        sh """
     echo "Building Image and pushing to ECR"
     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
     docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion} .
@@ -86,7 +78,7 @@ withAWS(region:'us-east-1',credentials:'aws-creds') {
     docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
 
        """
-}
+                    }
                 }
             }
         }
@@ -97,8 +89,7 @@ withAWS(region:'us-east-1',credentials:'aws-creds') {
         //                     docker build -t catalogue:${appVersion} .
         //                     docker images
 
-
-        //                """ 
+        //                """
         //         }
         //     }
         // }
@@ -107,36 +98,36 @@ withAWS(region:'us-east-1',credentials:'aws-creds') {
         //     when {
         //         // ver important for deployment
         //         expression {
-        //              "${params.DEPLOY}" == "true" 
+        //              "${params.DEPLOY}" == "true"
         //         }
-                
+
         //         }
 
         //     steps {
         //         script{
         //             sh """
         //                 echo "Building----------A-Deployment------------------WHEN-CONDITION"
-        //                """ 
+        //                """
         //         }
         //     }
         // }
-    }
+        }
 
-    // --------------------------post build--------------------
-        post { 
-        always { 
+        // --------------------------post build--------------------
+        post {
+        always {
             echo 'I will always say Hello again!'
             cleanWs()
         }
-        success{
-            echo "Success---------------"
+        success {
+            echo 'Success---------------'
         }
-        failure{
-            echo "failure---------------"
+        failure {
+            echo 'failure---------------'
         }
-        aborted{
-            echo "someone -aborted--------------------------------"
-            echo "may be timeeout  -aborted--------------------------------"
+        aborted {
+            echo 'someone -aborted--------------------------------'
+            echo 'may be timeeout  -aborted--------------------------------'
+        }
         }
     }
-}
