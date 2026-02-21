@@ -4,6 +4,6 @@ jobs:
   feature-pipeline:
     uses: actions-penke-van-1/reusable-workflows/.github/workflows/feature-nodejs-pipeline.yaml@main
     with:
-      project: roboshop-1
+      project: roboshop-12
       component: catalogue
       environment: dev
