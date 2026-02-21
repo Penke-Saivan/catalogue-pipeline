@@ -1,5 +1,6 @@
 name: feature-pipeline-catalogue-caller
-on: [push]
+on: 
+  workflow_dispatch:
 jobs:
   feature-pipeline:
     uses: actions-penke-van-1/reusable-workflows/.github/workflows/feature-nodejs-pipeline.yaml@main
