@@ -1,0 +1,9 @@
+name: feature-pipeline-catalogue-caller
+on: [push]
+jobs:
+  feature-pipeline:
+    uses: actions-penke-van-1/reusable-workflows/.github/workflows/feature-nodejs-pipeline.yaml@main
+    with:
+      project: roboshop-123
+      component: catalogue
+      environment: dev
